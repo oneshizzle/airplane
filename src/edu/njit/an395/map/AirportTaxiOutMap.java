@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -17,13 +18,15 @@ public class AirportTaxiOutMap extends Mapper<LongWritable, Text, Text, AirportT
 
 	@Override
 	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-		List<String> attributes = Arrays.asList(value.toString().split(","));
-		RawFlight aRawFlight = FlightUtil.convert(attributes);
-		HadoopFlight aHadoopFlight = FlightUtil.convert(aRawFlight);
-		AirportTaxi airportTaxiIn = new AirportTaxi();
-		airportTaxiIn.setAirport(aHadoopFlight.getOrigin());
-		airportTaxiIn.setTaxiDirection(new Text("OUT"));
-		airportTaxiIn.setTaxiTime(aHadoopFlight.getTaxiOut());
-		context.write(aHadoopFlight.getOrigin(), airportTaxiIn);
+		if (!StringUtils.startsWith(value.toString(), "Year")) {
+			List<String> attributes = Arrays.asList(value.toString().split(","));
+			RawFlight aRawFlight = FlightUtil.convert(attributes);
+			HadoopFlight aHadoopFlight = FlightUtil.convert(aRawFlight);
+			AirportTaxi airportTaxiIn = new AirportTaxi();
+			airportTaxiIn.setAirport(aHadoopFlight.getOrigin());
+			airportTaxiIn.setTaxiDirection(new Text("OUT"));
+			airportTaxiIn.setTaxiTime(aHadoopFlight.getTaxiOut());
+			context.write(aHadoopFlight.getOrigin(), airportTaxiIn);
+		}
 	}
 }

@@ -118,6 +118,7 @@ public class HadoopFlight implements Writable {
 	}
 
 	public void setCancellationCode(Text cancellationCode) {
+		this.cancellationCode = new Text("");
 		if (cancellationCode.toString().trim().equalsIgnoreCase("A")) {
 			this.cancellationCode = new Text("Carrier");
 		}
@@ -144,7 +145,7 @@ public class HadoopFlight implements Writable {
 
 	@Override
 	public void readFields(DataInput dataInput) throws IOException {
-		flightDate.readFields(dataInput);
+		//flightDate.readFields(dataInput);
 		uniqueCarrier.readFields(dataInput);
 		flightNum.readFields(dataInput);// flight number
 		arrivalDelay.readFields(dataInput);// arrival delay, in minutes
@@ -162,7 +163,7 @@ public class HadoopFlight implements Writable {
 
 	@Override
 	public void write(DataOutput dataOutput) throws IOException {
-		flightDate.write(dataOutput);
+		//flightDate.write(dataOutput);
 		uniqueCarrier.write(dataOutput);
 		flightNum.write(dataOutput);// flight number
 		arrivalDelay.write(dataOutput);// arrival delay, in minutes

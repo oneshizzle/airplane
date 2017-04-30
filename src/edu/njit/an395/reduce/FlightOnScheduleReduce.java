@@ -2,7 +2,6 @@ package edu.njit.an395.reduce;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,35 +39,31 @@ public class FlightOnScheduleReduce extends Reducer<Text, HadoopFlight, FlightSc
 
 	@Override
 	protected void reduce(Text carrier, Iterable<HadoopFlight> flights, Context context) throws IOException, InterruptedException {
+		System.out.println(carrier + " ADRIEN");
 		if (null == highestList) {
-			highestList = new ArrayList<FlightScheduleStats>(10);
+			highestList = new ArrayList<FlightScheduleStats>();
 		}
 
 		if (null == lowestList) {
-			lowestList = new ArrayList<FlightScheduleStats>(10);
+			lowestList = new ArrayList<FlightScheduleStats>();
 		}
 
-		FlightScheduleStats flightStats = new FlightScheduleStats();
-		flightStats.setUniqueCarrier(carrier);
+		FlightScheduleStats lowest = new FlightScheduleStats();
+		lowest.setUniqueCarrier(carrier);
 		long lateTotal = lateSum(flights);
 		long total = sum(flights);
-		flightStats.setLateProbability(new DoubleWritable(lateTotal / total));
+		lowest.setLateProbability(new DoubleWritable(lateTotal / total));
 
-		lowestList.add(flightStats);
-		highestList.add(flightStats);
+		FlightScheduleStats highest = new FlightScheduleStats();
+		highest.setUniqueCarrier(carrier);
+		lateTotal = lateSum(flights);
+		total = sum(flights);
+		highest.setLateProbability(new DoubleWritable(lateTotal / total));
 
-		Collections.sort(lowestList);
-
-		Collections.sort(highestList);
-		Collections.reverse(highestList);
-
-		if (highestList.size() > 5) {
-			highestList.remove(5);
-		}
-		if (lowestList.size() > 5) {
-			lowestList.remove(5);
-		}
-
+		lowestList.add(lowest);
+		highestList.add(highest);
+		
+		System.out.println(lowestList.size() + " " + highestList.size());
 	}
 
 	protected void cleanup(Context context) throws IOException, InterruptedException {

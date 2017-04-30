@@ -16,10 +16,12 @@ public class FlightUtil {
 		HadoopFlight aHadoopFlight = new HadoopFlight();
 		try {
 			aHadoopFlight.setUniqueCarrier(new Text(aRawFlight.getUniqueCarrier()));
+			aHadoopFlight.setFlightNum(new Text(aRawFlight.getFlightNum()));
 			aHadoopFlight.setArrivalDelay(new ShortWritable(aRawFlight.getArrivalDelay()));
 			aHadoopFlight.setDepartureDelay(new ShortWritable(aRawFlight.getDepartureDelay()));
 			aHadoopFlight.setCancellationCode(new Text(aRawFlight.getCancellationCode()));
 			aHadoopFlight.setCancelled(new BooleanWritable((aRawFlight.getCancelled() == 1)));
+			aHadoopFlight.setDiverted(new BooleanWritable((aRawFlight.getDiverted() == 1)));
 			aHadoopFlight.setDestination(new Text(aRawFlight.getDestination()));
 			aHadoopFlight.setOrigin(new Text(aRawFlight.getOrigin()));
 			aHadoopFlight.setTaxiIn(new ShortWritable(convert(aRawFlight.getTaxiIn())));
@@ -63,7 +65,7 @@ public class FlightUtil {
 		if (StringUtils.isNumeric(aString)) {
 			return new Short(aString).shortValue();
 		} else {
-			return -1;
+			return 0;
 		}
 	}
 }

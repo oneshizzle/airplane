@@ -15,13 +15,15 @@ import edu.njit.an395.util.FlightUtil;
 
 public class FlightMap extends Mapper<LongWritable, Text, Text, HadoopFlight> {
 
+	private Text flightSymbol = new Text();
 	@Override
-	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 		if (!StringUtils.startsWith(value.toString(), "Year")) {
 			List<String> attributes = Arrays.asList(value.toString().split(","));
 			RawFlight aRawFlight = FlightUtil.convert(attributes);
 			HadoopFlight aHadoopFlight = FlightUtil.convert(aRawFlight);
-			context.write(new Text(aHadoopFlight.getUniqueCarrier()), aHadoopFlight);
+			flightSymbol.set(aHadoopFlight.getUniqueCarrier());
+			context.write(flightSymbol, aHadoopFlight);
 		}
 	}
 }

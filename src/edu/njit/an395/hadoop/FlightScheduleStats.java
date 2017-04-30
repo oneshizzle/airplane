@@ -13,7 +13,7 @@ public class FlightScheduleStats implements Writable, WritableComparable<FlightS
 
 	private Text uniqueCarrier;// unique carrier code
 	// probability of being late
-	private DoubleWritable lateProbability = new DoubleWritable(0.0);
+	private DoubleWritable lateProbability;
 
 	public Text getUniqueCarrier() {
 		return uniqueCarrier;

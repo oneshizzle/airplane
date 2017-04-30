@@ -2,7 +2,7 @@ package edu.njit.an395.reduce;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.hadoop.io.DoubleWritable;
@@ -17,29 +17,18 @@ public class FlightOnScheduleReduce extends Reducer<Text, HadoopFlight, FlightSc
 	private List<FlightScheduleStats> highestList;
 	private List<FlightScheduleStats> lowestList;
 
-	private long lateSum(Iterable<HadoopFlight> flights) {
-		long sum = 0;
+	protected void reduce(Text carrier, Iterable<HadoopFlight> flights, Context context) throws IOException, InterruptedException {
+
+		double lateTotal = 0.0;
+		double total = 0.0;
+
 		for (HadoopFlight flight : flights) {
+			total = total + 1;
 			if (flight.isOnSchedule() == false) {
-				sum += 1;
+				lateTotal = lateTotal + 1;
 			}
 		}
-		return sum;
-	}
 
-	private long sum(Iterable<HadoopFlight> flights) {
-		long sum = 0;
-		Iterator<HadoopFlight> iter = flights.iterator();
-		while (iter.hasNext()) {
-			sum += 1;
-			iter.next();
-		}
-		return sum;
-	}
-
-	@Override
-	protected void reduce(Text carrier, Iterable<HadoopFlight> flights, Context context) throws IOException, InterruptedException {
-		System.out.println(carrier + " ADRIEN");
 		if (null == highestList) {
 			highestList = new ArrayList<FlightScheduleStats>();
 		}
@@ -48,30 +37,44 @@ public class FlightOnScheduleReduce extends Reducer<Text, HadoopFlight, FlightSc
 			lowestList = new ArrayList<FlightScheduleStats>();
 		}
 
+		Text carrier_name = new Text(carrier);
+
 		FlightScheduleStats lowest = new FlightScheduleStats();
-		lowest.setUniqueCarrier(carrier);
-		long lateTotal = lateSum(flights);
-		long total = sum(flights);
+		lowest.setUniqueCarrier(carrier_name);
 		lowest.setLateProbability(new DoubleWritable(lateTotal / total));
 
 		FlightScheduleStats highest = new FlightScheduleStats();
-		highest.setUniqueCarrier(carrier);
-		lateTotal = lateSum(flights);
-		total = sum(flights);
+		highest.setUniqueCarrier(carrier_name);
 		highest.setLateProbability(new DoubleWritable(lateTotal / total));
+
+		System.out.println(carrier_name + " " + (lateTotal / total) + " LAWRENCE " + lowestList.size() + " " + highestList.size());
 
 		lowestList.add(lowest);
 		highestList.add(highest);
-		
-		System.out.println(lowestList.size() + " " + highestList.size());
+
+		Collections.sort(highestList);
+		Collections.sort(lowestList);
+		Collections.reverse(lowestList);
+
+		if (lowestList.size() > 5) {
+			lowestList.remove(5);
+		}
+
+		if (highestList.size() > 5) {
+			highestList.remove(5);
+		}
+
 	}
 
 	protected void cleanup(Context context) throws IOException, InterruptedException {
+		int count = 0;
 		for (FlightScheduleStats value : highestList) {
-			context.write(value, new Text(value.toString()));
+			context.write(value, new Text(" EARLY: " + (++count)));
 		}
+
+		count = 0;
 		for (FlightScheduleStats value : lowestList) {
-			context.write(value, new Text(value.toString()));
+			context.write(value, new Text(" LATE: " + (++count)));
 		}
 	}
 }

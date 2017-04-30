@@ -8,23 +8,26 @@ import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.ShortWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableComparable;
 
 public class HadoopFlight implements Writable {
 
-	private Text flightDate; // 1987-2008
-	private Text uniqueCarrier;// unique carrier code
-	private Text flightNum;// flight number
-	private ShortWritable arrivalDelay;// arrival delay, in minutes
-	private ShortWritable departureDelay;// departure delay, in minutes
-	private Text origin;// IATA airport code
-	private Text destination;// IATA airport code
-	private ShortWritable taxiIn;// taxi in time, in minutes
-	private ShortWritable taxiOut;// taxi out time in minutes
-	private BooleanWritable cancelled;//
-	private Text cancellationCode;
+	private Text flightDate = new Text(); // 1987-2008
+	private Text uniqueCarrier = new Text();// unique carrier code
+	private Text flightNum = new Text();// flight number
+	private ShortWritable arrivalDelay = new ShortWritable();
+	// arrival delay, in minutes
+	private ShortWritable departureDelay = new ShortWritable();
+	// departure delay, in minutes
+	private Text origin = new Text();// IATA airport code
+	private Text destination = new Text();// IATA airport code
+	private ShortWritable taxiIn = new ShortWritable();
+	// taxi in time, in minutes
+	private ShortWritable taxiOut = new ShortWritable();
+	// taxi out time in minutes
+	private BooleanWritable cancelled = new BooleanWritable();//
+	private Text cancellationCode = new Text();
 	// reason for cancellation (A = carrier, B = weather, C = NAS, D = security)
-	private BooleanWritable diverted;// 1 = yes, 0 = no
+	private BooleanWritable diverted = new BooleanWritable();// 1 = yes, 0 = no
 
 	/**
 	 * @return the flightDate
@@ -145,9 +148,8 @@ public class HadoopFlight implements Writable {
 
 	@Override
 	public void readFields(DataInput dataInput) throws IOException {
-		//flightDate.readFields(dataInput);
+		flightDate.readFields(dataInput);
 		uniqueCarrier.readFields(dataInput);
-		flightNum.readFields(dataInput);// flight number
 		arrivalDelay.readFields(dataInput);// arrival delay, in minutes
 		departureDelay.readFields(dataInput);// departure delay, in minutes
 		origin.readFields(dataInput);// IATA airport code
@@ -156,16 +158,16 @@ public class HadoopFlight implements Writable {
 		taxiOut.readFields(dataInput);// taxi out time in minutes
 		cancelled.readFields(dataInput);//
 		cancellationCode.readFields(dataInput);
-		// reason for cancellation (A = carrier, B = weather, C = NAS, D =
-		// security)
+		// reason for cancellation
+		// (A = carrier, B = weather, C = NAS, D = security)
 		diverted.readFields(dataInput);// 1 = yes, 0 = no
+		flightNum.readFields(dataInput);// flight number
 	}
 
 	@Override
 	public void write(DataOutput dataOutput) throws IOException {
-		//flightDate.write(dataOutput);
+		flightDate.write(dataOutput);
 		uniqueCarrier.write(dataOutput);
-		flightNum.write(dataOutput);// flight number
 		arrivalDelay.write(dataOutput);// arrival delay, in minutes
 		departureDelay.write(dataOutput);// departure delay, in minutes
 		origin.write(dataOutput);// IATA airport code
@@ -174,9 +176,10 @@ public class HadoopFlight implements Writable {
 		taxiOut.write(dataOutput);// taxi out time in minutes
 		cancelled.write(dataOutput);//
 		cancellationCode.write(dataOutput);
-		// reason for cancellation (A = carrier, B = weather, C = NAS, D =
-		// security)
+		// reason for cancellation
+		// (A = carrier, B = weather, C = NAS, D = security)
 		diverted.write(dataOutput);// 1 = yes, 0 = no
+		flightNum.write(dataOutput);// flight number
 	}
 
 	@Override

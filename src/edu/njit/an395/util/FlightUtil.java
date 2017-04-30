@@ -15,6 +15,7 @@ public class FlightUtil {
 	public static HadoopFlight convert(RawFlight aRawFlight) {
 		HadoopFlight aHadoopFlight = new HadoopFlight();
 		try {
+			aHadoopFlight.setFlightDate(new Text(aRawFlight.getYear() + aRawFlight.getDayOfMonth() + aRawFlight.getMonth()));
 			aHadoopFlight.setUniqueCarrier(new Text(aRawFlight.getUniqueCarrier()));
 			aHadoopFlight.setFlightNum(new Text(aRawFlight.getFlightNum()));
 			aHadoopFlight.setArrivalDelay(new ShortWritable(aRawFlight.getArrivalDelay()));

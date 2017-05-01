@@ -12,10 +12,10 @@ import org.apache.hadoop.io.WritableComparable;
 
 public class AirportTaxi implements Writable, WritableComparable<AirportTaxi> {
 
-	private Text airport;
-	private ShortWritable taxiTime;
-	private Text taxiDirection;
-	private DoubleWritable averageTaxiTime;
+	private Text airport = new Text();
+	private ShortWritable taxiTime = new ShortWritable();
+	private Text taxiDirection = new Text();
+	private DoubleWritable averageTaxiTime = new DoubleWritable(0.0);
 
 	public Text getAirport() {
 		return airport;
@@ -64,6 +64,7 @@ public class AirportTaxi implements Writable, WritableComparable<AirportTaxi> {
 		airport.readFields(dataInput);
 		taxiDirection.readFields(dataInput);
 		taxiTime.readFields(dataInput);// flight number
+		averageTaxiTime.readFields(dataInput);
 	}
 
 	@Override
@@ -71,9 +72,10 @@ public class AirportTaxi implements Writable, WritableComparable<AirportTaxi> {
 		airport.write(dataOutput);
 		taxiDirection.write(dataOutput);
 		taxiTime.write(dataOutput);// flight number
+		averageTaxiTime.write(dataOutput);
 	}
 
 	public String toString() {
-		return "TAXI " + this.taxiDirection + " for " + airport.toString() + " ";
+		return "TAXI " + taxiDirection + " for " + airport.toString() + " ";
 	}
 }

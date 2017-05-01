@@ -47,7 +47,7 @@ public class FlightOnScheduleReduce extends Reducer<Text, HadoopFlight, FlightSc
 		highest.setUniqueCarrier(carrier_name);
 		highest.setLateProbability(new DoubleWritable(lateTotal / total));
 
-		System.out.println(carrier_name + " " + (lateTotal / total) + " LAWRENCE " + lowestList.size() + " " + highestList.size());
+		// System.out.println(carrier_name + " " + (lateTotal / total) + " LAWRENCE " + lowestList.size() + " " + highestList.size());
 
 		lowestList.add(lowest);
 		highestList.add(highest);

@@ -76,7 +76,8 @@ public class FlightScheduleStats implements Writable, WritableComparable<FlightS
 	}
 
 	public String toString() {
-		return this.getUniqueCarrier() + " (" + this.getLateProbability() + ") ";
+		double ontimeProbability = (1.0 - this.getLateProbability().get());
+		return this.getUniqueCarrier() + " (" + ontimeProbability + ") ";
 	}
 
 }

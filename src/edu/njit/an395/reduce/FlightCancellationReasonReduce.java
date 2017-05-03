@@ -32,17 +32,21 @@ public class FlightCancellationReasonReduce extends Reducer<Text, LongWritable, 
 	}
 
 	protected void cleanup(Context context) throws IOException, InterruptedException {
-		Set<Text> codes = cancellationCodeMap.keySet();
-		LongWritable maxValue = new LongWritable(0);
-		Text cancellationCode = new Text();
+		if (null == cancellationCodeMap) {
+			context.write(new Text("NA"), new Text("No 	valid cancellation codes"));
+		} else {
 
-		for (Text code : codes) {
-			if (cancellationCodeMap.get(code).get() > maxValue.get()) {
-				maxValue.set(cancellationCodeMap.get(code).get());
-				cancellationCode.set(code.toString());
+			Set<Text> codes = cancellationCodeMap.keySet();
+			LongWritable maxValue = new LongWritable(0);
+			Text cancellationCode = new Text();
+
+			for (Text code : codes) {
+				if (cancellationCodeMap.get(code).get() > maxValue.get()) {
+					maxValue.set(cancellationCodeMap.get(code).get());
+					cancellationCode.set(code.toString());
+				}
 			}
+			context.write(cancellationCode, new Text(cancellationCode + " " + maxValue.get()));
 		}
-		context.write(cancellationCode, new Text(cancellationCode + " " + maxValue.get()));
-
 	}
 }

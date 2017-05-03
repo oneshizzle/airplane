@@ -23,11 +23,13 @@ public class AirportTaxiInMap extends Mapper<LongWritable, Text, Text, AirportTa
 			List<String> attributes = Arrays.asList(value.toString().split(","));
 			RawFlight aRawFlight = FlightUtil.convert(attributes);
 			HadoopFlight aHadoopFlight = FlightUtil.convert(aRawFlight);
-			AirportTaxi airportTaxiIn = new AirportTaxi();
-			airportTaxiIn.setAirport(aHadoopFlight.getDestination());
-			airportTaxiIn.setTaxiDirection(new Text("IN"));
-			airportTaxiIn.setTaxiTime(aHadoopFlight.getTaxiIn());
-			context.write(aHadoopFlight.getDestination(), airportTaxiIn);
+			if (!attributes.get(19).trim().equalsIgnoreCase("NA")) {
+				AirportTaxi airportTaxiIn = new AirportTaxi();
+				airportTaxiIn.setAirport(aHadoopFlight.getDestination());
+				airportTaxiIn.setTaxiDirection(new Text("IN"));
+				airportTaxiIn.setTaxiTime(aHadoopFlight.getTaxiIn());
+				context.write(aHadoopFlight.getDestination(), airportTaxiIn);
+			}
 		}
 	}
 }

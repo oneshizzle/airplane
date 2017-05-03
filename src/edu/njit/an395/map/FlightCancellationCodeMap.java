@@ -21,7 +21,7 @@ public class FlightCancellationCodeMap extends Mapper<LongWritable, Text, Text, 
 			List<String> attributes = Arrays.asList(value.toString().split(","));
 			RawFlight aRawFlight = FlightUtil.convert(attributes);
 			HadoopFlight aHadoopFlight = FlightUtil.convert(aRawFlight);
-			if (aHadoopFlight.getCancelled().get() == true) {
+			if (aHadoopFlight.getCancelled().get() == true && !aHadoopFlight.getCancellationCode().toString().equalsIgnoreCase("Unknown")) {
 				context.write(new Text(aHadoopFlight.getCancellationCode()), new LongWritable(1));
 			}
 		}

@@ -69,12 +69,12 @@ public class FlightOnScheduleReduce extends Reducer<Text, HadoopFlight, FlightSc
 	protected void cleanup(Context context) throws IOException, InterruptedException {
 		int count = 0;
 		for (FlightScheduleStats value : highestList) {
-			context.write(value, new Text(" EARLY: " + (++count)));
+			context.write(value, new Text(" LEAST LIKELY TO BE LATE: " + (++count)));
 		}
 
 		count = 0;
 		for (FlightScheduleStats value : lowestList) {
-			context.write(value, new Text(" LATE: " + (++count)));
+			context.write(value, new Text(" MOST LIKELY TO BE LATE: " + (++count)));
 		}
 	}
 }

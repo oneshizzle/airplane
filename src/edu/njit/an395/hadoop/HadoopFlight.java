@@ -136,6 +136,10 @@ public class HadoopFlight implements Writable {
 		if (cancellationCode.toString().trim().equalsIgnoreCase("D")) {
 			this.cancellationCode = new Text("Security");
 		}
+		
+		if (cancellationCode.toString().trim().equalsIgnoreCase("NA")) {
+			this.cancellationCode = new Text("Unknown");
+		}
 	}
 
 	public BooleanWritable isDiverted() {

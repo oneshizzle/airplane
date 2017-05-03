@@ -12,13 +12,13 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 import edu.njit.an395.hadoop.AirportTaxi;
 
-public class AvgAirportTaxiReduce extends Reducer<Text, AirportTaxi, AirportTaxi, Text> {
+public class AvgAirportTaxiReduce extends Reducer<Text, AirportTaxi, Text, Text> {
 
 	private List<AirportTaxi> highestList;
 	private List<AirportTaxi> lowestList;
 
 	protected void reduce(Text airport, Iterable<AirportTaxi> airportTaxis, Context context) throws IOException, InterruptedException {
-		
+
 		if (null == highestList) {
 			highestList = new ArrayList<AirportTaxi>(5);
 		}
@@ -30,13 +30,13 @@ public class AvgAirportTaxiReduce extends Reducer<Text, AirportTaxi, AirportTaxi
 		Double totalTaxiTime = 0.0;
 		String taxiDirection = "";
 		Double count = 0.0;
-		
+
 		for (AirportTaxi taxi : airportTaxis) {
 			taxiDirection = taxi.getTaxiDirection().toString();
 			totalTaxiTime += new Double(taxi.getTaxiTime().get());
 			count += 1;
 		}
-		
+
 		String airportName = airport.toString();
 
 		AirportTaxi airportTaxi1 = new AirportTaxi();
@@ -51,7 +51,7 @@ public class AvgAirportTaxiReduce extends Reducer<Text, AirportTaxi, AirportTaxi
 		airportTaxi2.setAirport(new Text(airportName));
 		airportTaxi2.setAverageTaxiTime(new DoubleWritable(totalTaxiTime / count));
 
-		// System.out.println("ADRIEN " + airportName + "[" + totalTaxiTime + "/" + count + "]");
+		System.out.println("ADRIEN " + airportName + "[" + totalTaxiTime + "/" + count + "]");
 
 		lowestList.add(airportTaxi1);
 		highestList.add(airportTaxi2);
@@ -71,11 +71,24 @@ public class AvgAirportTaxiReduce extends Reducer<Text, AirportTaxi, AirportTaxi
 	}
 
 	protected void cleanup(Context context) throws IOException, InterruptedException {
-		for (AirportTaxi value : highestList) {
-			context.write(value, new Text(value.getAverageTaxiTime().toString()));
-		}
-		for (AirportTaxi value : lowestList) {
-			context.write(value, new Text(value.getAverageTaxiTime().toString()));
+
+		if (highestList == null) {
+			context.write(new Text("No valid data"), new Text("NA"));
+		} else {
+
+			int position = 0;
+
+			for (AirportTaxi value : highestList) {
+				position = position + 1;
+				context.write(new Text(position + " Longest Average " + value), new Text(value.getAverageTaxiTime().toString()));
+			}
+
+			position = 0;
+
+			for (AirportTaxi value : lowestList) {
+				position = position + 1;
+				context.write(new Text(position + " Shortest Average " + value), new Text(value.getAverageTaxiTime().toString()));
+			}
 		}
 	}
 
